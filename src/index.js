@@ -1,7 +1,7 @@
 var React = require('react'),
-	Component1 = require('./components/component1'); 
+	Shopper = require('./components/shopper'); 
 
 React.render(
-  <Component1 />,
+  <Shopper />,
   document.getElementById('content')
 );

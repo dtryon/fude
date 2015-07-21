@@ -1,3 +1,12 @@
 /*
 Styles Here
-/*
+*/
+
+.main {	
+	width: 80%;
+}
+
+.catalogue {
+	width: 60%;
+	float: left;
+}
