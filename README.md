@@ -1,3 +1,3 @@
-# react-start
+# Fude
 
-A ReactJS hot-loading start project.
+Buy Fude, Eat Fude.
