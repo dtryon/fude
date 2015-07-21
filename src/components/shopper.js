@@ -35,19 +35,25 @@ var ItemDescription = React.createClass({display: 'ItemDescription',
 
 var ItemShopperControl = React.createClass({display: 'ItemShopperControl',
 
+  itemIncremented: function() {
+    this.props.itemIncremented();
+  },
+  itemDecremented: function() {
+    this.props.itemDecremented();
+  },
   render: function() {
     return (
       <div>
         <div>
-          <div></div>
+          <div>Quantity</div>
           <div>
-            <button>-</button>
+            <button onClick={this.itemDecremented}>-</button>
             <input type="text" value="0"/>
-            <button>+</button>
+            <button onClick={this.itemIncremented}>+</button>
           </div>
         </div>
         <div>
-          <button>Add</button>
+          <button onClick={this.itemIncremented}>Add</button>
         </div>
       </div>
       );
@@ -55,7 +61,12 @@ var ItemShopperControl = React.createClass({display: 'ItemShopperControl',
 });
 
 var ItemShopper = React.createClass({display: 'ItemShopper',
-
+  itemIncremented: function() {
+    this.props.itemIncremented();
+  },
+  itemDecremented: function() {
+    this.props.itemDecremented();
+  },
   render: function() {
     return (
       <div>
@@ -63,7 +74,7 @@ var ItemShopper = React.createClass({display: 'ItemShopper',
           <span className="item-price">{"£" + this.props.pricing.price}</span>
           <span clasName="item-unit-price">{this.props.pricing.unitPrice + "/(" + this.props.pricing.unitType + ")"}</span>
         </div>
-        <ItemShopperControl />
+        <ItemShopperControl itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} />
         <div><a href="#" onClick="">Save to shopping list</a></div>
         <div><a href="#" onClick="">Rest of shelf ></a></div>
       </div>);
@@ -71,14 +82,19 @@ var ItemShopper = React.createClass({display: 'ItemShopper',
 });
 
 var CatalogueItem = React.createClass({displayName: 'CatalogueItem',
-
+  itemIncremented: function() {
+    this.props.itemIncremented(this.props.item);
+  },
+  itemDecremented: function() {
+    this.props.itemDecremented(this.props.item);
+  },
   render: function() {
     var pricing = { price: this.props.item.Price, unitPrice: this.props.item.UnitPrice, unitType: this.props.item.unitType };
     return (
         <div className="item">
           <ItemImage url={this.props.item.Image}/>
           <ItemDescription name={this.props.item.Name}/>
-          <ItemShopper pricing={pricing}/>
+          <ItemShopper itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} pricing={pricing}/>
         </div>
       );
   }
@@ -94,8 +110,14 @@ var CatalogueSort = React.createClass({displayName: 'CatalogueSort',
 });
 
 var Catalogue = React.createClass({displayName: 'Catalogue',
+  itemIncremented: function(item) {
+    this.props.itemIncremented(item.Id);
+  },
+  itemDecremented: function(item) {
+    this.props.itemDecremented(item.Id);
+  },
   render: function() {
-    var items = this.props.items.map(function(i) { return (<CatalogueItem item={i}/>); })
+    var items = this.props.items.map(function(i) { return (<CatalogueItem itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} item={i}/>); }.bind(this))
     return (
       <div className="catalogue">
         <CatalogueSort />
@@ -110,12 +132,28 @@ var Catalogue = React.createClass({displayName: 'Catalogue',
 
 var Shopper = React.createClass({displayName: 'Shopper',
   getInitialState: function() {
-    return {};
+    return {currentItems:{}};
+  },
+  itemIncremented: function(itemId) {
+    var itemCount = this.state.currentItems[itemId];
+    if (itemCount === undefined) { itemCount = 1; }
+    else { itemCount += 1; }
+    this.state.currentItems[itemId] = itemCount;
+    this.setState({currentItems: this.state.currentItems});
+    console.log(this.state);
+  },
+  itemDecremented: function(itemId) {
+    var itemCount = this.state.currentItems[itemId];
+    if (itemCount === undefined) { itemCount = 0; }
+    else if (itemCount > 0) { itemCount -= 1; }
+    this.state.currentItems[itemId] = itemCount;
+    this.setState({currentItems: this.state.currentItems});
+    console.log(this.state);
   },
   render: function() {
     return (
       <div className="main">
-          <Catalogue items={catalogue.getProducts()} />
+          <Catalogue itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} items={catalogue.getProducts()} />
           <Basket />
       </div>
     );
