@@ -1,7 +1,7 @@
 {
-  "name": "react-start",
+  "name": "fude",
   "version": "1.0.0",
-  "description": "ReactJS Hot Loading Start Project",
+  "description": "Buy fude, eat fude.",
   "main": "src/index.html",
   "directories": {
     "test": "tests"
@@ -33,12 +33,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dtryon/react-start.git"
+    "url": "https://github.com/dtryon/fude.git"
   },
   "author": "D. Tryon",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dtryon/life/issues"
+    "url": "https://github.com/dtryon/fude/issues"
   },
-  "homepage": "https://github.com/dtryon/life"
+  "homepage": "https://github.com/dtryon/fude"
 }
