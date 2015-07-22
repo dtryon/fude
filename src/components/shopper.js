@@ -4,11 +4,74 @@ var React = require('react'),
     catalogue = require('../services/catalogue');
 
 
-var Basket = React.createClass({displayName: 'Basket',
+var BasketItem = React.createClass({displayName: 'BasketItem',
+
   render: function() {
     return (
+      <li>
+        <div>
+          <span><img src={this.props.item.Image}/></span>
+          <span>{this.props.item.Name}</span>
+          <span><button onClick={this.props.removeItem}>X</button></span>
+        </div>
+        <div>
+          <ItemQuantityControl itemIncremented={this.props.itemIncremented} itemDecremented={this.props.itemDecremented} quantity={this.props.quantity} />
+          <span>{"£" + (this.props.price * this.props.quantity)}</span>
+        </div>
+      </li>
+      );
+  }
+});
+
+var Basket = React.createClass({displayName: 'Basket',
+  
+  itemIncremented: function(item) {
+    this.props.itemIncremented(item.Id);
+  },
+  itemDecremented: function(item) {
+    this.props.itemDecremented(item.Id);
+  },
+  removeItem: function(item) {
+    this.props.removeItem(item.Id);
+  },
+  render: function() {
+    function totalCount()
+    {
+      var total = 0;
+      for (var prop in this.props.selectedItems) {
+        if (this.props.selectedItems.hasOwnProperty(prop)) {
+          total += this.props.selectedItems[prop];
+        }
+      }
+      return total;
+    }
+
+    function getQuantity(item) {
+      if (this.props.selectedItems.hasOwnProperty(item.Id)) {
+        return this.props.selectedItems[item.Id];
+      }
+      return 0;
+    }
+
+    var basketSelectedItems = this.props.items.filter(function(i) { return i.Id in this.props.selectedItems; }.bind(this));
+
+    var basketItems = basketSelectedItems.map(function(i) { return (<BasketItem itemIncremented={this.itemIncremented.bind(this, i)} 
+                                                                                itemDecremented={this.itemDecremented.bind(this, i)} 
+                                                                                removeItem={this.removeItem.bind(this, i)}
+                                                                                item={i} 
+                                                                                quantity={getQuantity.call(this, i)}
+                                                                                price={i.Price} />); }.bind(this));
+
+    return (
       <div className="basket">
-          Basket
+          <div className="header">
+            <span className="basketImage"></span>
+            <span className="basketTitle">Basket</span>
+            <span className="basketCount">{totalCount.call(this) + " items"}</span>
+          </div>
+          <ul className="basket-listing">
+            {basketItems}
+          </ul>
       </div>
     );
   }
@@ -22,7 +85,7 @@ var ItemImage = React.createClass({display: 'ItemImage',
   }
 });
 
-var ItemDescription = React.createClass({display: 'ItemDescription',
+var ItemDescription = React.createClass({displayName: 'ItemDescription',
 
   render: function() {
     return (
@@ -33,7 +96,21 @@ var ItemDescription = React.createClass({display: 'ItemDescription',
   }
 });
 
-var ItemShopperControl = React.createClass({display: 'ItemShopperControl',
+var ItemQuantityControl = React.createClass({displayName: 'ItemQuantityControl',
+
+  render: function() {
+
+    return (
+        <span>
+            <button onClick={this.props.itemDecremented}>-</button>
+            <input type="text" value={this.props.quantity} />
+            <button onClick={this.props.itemIncremented}>+</button>
+        </span>
+      );
+  }
+});
+
+var ItemShopperControl = React.createClass({displayName: 'ItemShopperControl',
 
   itemIncremented: function() {
     this.props.itemIncremented();
@@ -46,11 +123,7 @@ var ItemShopperControl = React.createClass({display: 'ItemShopperControl',
       <div>
         <div>
           <div>Quantity</div>
-          <div>
-            <button onClick={this.itemDecremented}>-</button>
-            <input type="text" value="0"/>
-            <button onClick={this.itemIncremented}>+</button>
-          </div>
+          <div><ItemQuantityControl itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} quantity={this.props.quantity} /></div>
         </div>
         <div>
           <button onClick={this.itemIncremented}>Add</button>
@@ -60,7 +133,7 @@ var ItemShopperControl = React.createClass({display: 'ItemShopperControl',
   }
 });
 
-var ItemShopper = React.createClass({display: 'ItemShopper',
+var ItemShopper = React.createClass({displayName: 'ItemShopper',
   itemIncremented: function() {
     this.props.itemIncremented();
   },
@@ -74,7 +147,7 @@ var ItemShopper = React.createClass({display: 'ItemShopper',
           <span className="item-price">{"£" + this.props.pricing.price}</span>
           <span clasName="item-unit-price">{this.props.pricing.unitPrice + "/(" + this.props.pricing.unitType + ")"}</span>
         </div>
-        <ItemShopperControl itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} />
+        <ItemShopperControl itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} quantity={this.props.quantity} />
         <div><a href="#" onClick="">Save to shopping list</a></div>
         <div><a href="#" onClick="">Rest of shelf ></a></div>
       </div>);
@@ -94,7 +167,7 @@ var CatalogueItem = React.createClass({displayName: 'CatalogueItem',
         <div className="item">
           <ItemImage url={this.props.item.Image}/>
           <ItemDescription name={this.props.item.Name}/>
-          <ItemShopper itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} pricing={pricing}/>
+          <ItemShopper itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} pricing={pricing} quantity={this.props.quantity} />
         </div>
       );
   }
@@ -117,7 +190,15 @@ var Catalogue = React.createClass({displayName: 'Catalogue',
     this.props.itemDecremented(item.Id);
   },
   render: function() {
-    var items = this.props.items.map(function(i) { return (<CatalogueItem itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} item={i}/>); }.bind(this))
+
+    function getQuantity(item) {
+      if (this.props.selectedItems.hasOwnProperty(item.Id)) {
+        return this.props.selectedItems[item.Id];
+      }
+      return 0;
+    }
+
+    var items = this.props.items.map(function(i) { return (<CatalogueItem itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} item={i} quantity={getQuantity.call(this, i)}/>); }.bind(this))
     return (
       <div className="catalogue">
         <CatalogueSort />
@@ -140,21 +221,37 @@ var Shopper = React.createClass({displayName: 'Shopper',
     else { itemCount += 1; }
     this.state.currentItems[itemId] = itemCount;
     this.setState({currentItems: this.state.currentItems});
-    console.log(this.state);
   },
   itemDecremented: function(itemId) {
     var itemCount = this.state.currentItems[itemId];
-    if (itemCount === undefined) { itemCount = 0; }
-    else if (itemCount > 0) { itemCount -= 1; }
-    this.state.currentItems[itemId] = itemCount;
+    if (itemCount === undefined || itemCount <= 1) { 
+      delete this.state.currentItems[itemId];
+    }
+    else if (itemCount > 1) { 
+      itemCount -= 1; 
+      this.state.currentItems[itemId] = itemCount;
+    }
     this.setState({currentItems: this.state.currentItems});
-    console.log(this.state);
+  },
+  removeItem: function(itemId) {
+    delete this.state.currentItems[itemId];
+    this.setState({currentItems: this.state.currentItems});
   },
   render: function() {
+    var catalogueItems = catalogue.getProducts();
     return (
       <div className="main">
-          <Catalogue itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} items={catalogue.getProducts()} />
-          <Basket />
+          <Catalogue 
+            itemIncremented={this.itemIncremented} 
+            itemDecremented={this.itemDecremented} 
+            items={catalogueItems} 
+            selectedItems={this.state.currentItems} />
+          <Basket 
+            itemIncremented={this.itemIncremented} 
+            itemDecremented={this.itemDecremented}
+            selectedItems={this.state.currentItems} 
+            items={catalogueItems} 
+            removeItem={this.removeItem} />
       </div>
     );
   }
