@@ -81,7 +81,7 @@ var Basket = React.createClass({displayName: 'Basket',
 var ItemImage = React.createClass({display: 'ItemImage',
 
   render: function() {
-    return (<div><img src={this.props.url}/></div>);
+    return (<div className="item-detail-image"><img src={this.props.url}/></div>);
   }
 });
 
@@ -103,7 +103,7 @@ var ItemQuantityControl = React.createClass({displayName: 'ItemQuantityControl',
     return (
         <span>
             <button onClick={this.props.itemDecremented}>-</button>
-            <input type="text" value={this.props.quantity} />
+            <input className="item-quantity" type="text" value={this.props.quantity} />
             <button onClick={this.props.itemIncremented}>+</button>
         </span>
       );
@@ -111,22 +111,15 @@ var ItemQuantityControl = React.createClass({displayName: 'ItemQuantityControl',
 });
 
 var ItemShopperControl = React.createClass({displayName: 'ItemShopperControl',
-
-  itemIncremented: function() {
-    this.props.itemIncremented();
-  },
-  itemDecremented: function() {
-    this.props.itemDecremented();
-  },
   render: function() {
     return (
       <div>
-        <div>
-          <div>Quantity</div>
-          <div><ItemQuantityControl itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} quantity={this.props.quantity} /></div>
+        <div className="item-quantity-container">
+          <div><span className="item-quantity-label">Quantity</span></div>
+          <div><ItemQuantityControl itemIncremented={this.props.itemIncremented} itemDecremented={this.props.itemDecremented} quantity={this.props.quantity} /></div>
         </div>
-        <div>
-          <button onClick={this.itemIncremented}>Add</button>
+        <div className="item-add-container">
+          <button className="item-add" onClick={this.itemIncremented}>Add</button>
         </div>
       </div>
       );
@@ -134,20 +127,14 @@ var ItemShopperControl = React.createClass({displayName: 'ItemShopperControl',
 });
 
 var ItemShopper = React.createClass({displayName: 'ItemShopper',
-  itemIncremented: function() {
-    this.props.itemIncremented();
-  },
-  itemDecremented: function() {
-    this.props.itemDecremented();
-  },
   render: function() {
     return (
-      <div>
+      <div className="item-shopper">
         <div className="item-pricing">
           <span className="item-price">{"£" + this.props.pricing.price}</span>
-          <span clasName="item-unit-price">{this.props.pricing.unitPrice + "/(" + this.props.pricing.unitType + ")"}</span>
+          <span className="item-unit-price">{this.props.pricing.unitPrice + "/(" + this.props.pricing.unitType + ")"}</span>
         </div>
-        <ItemShopperControl itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} quantity={this.props.quantity} />
+        <ItemShopperControl itemIncremented={this.props.itemIncremented} itemDecremented={this.props.itemDecremented} quantity={this.props.quantity} />
         <div><a href="#" onClick="">Save to shopping list</a></div>
         <div><a href="#" onClick="">Rest of shelf ></a></div>
       </div>);
@@ -165,8 +152,10 @@ var CatalogueItem = React.createClass({displayName: 'CatalogueItem',
     var pricing = { price: this.props.item.Price, unitPrice: this.props.item.UnitPrice, unitType: this.props.item.unitType };
     return (
         <div className="item">
-          <ItemImage url={this.props.item.Image}/>
-          <ItemDescription name={this.props.item.Name}/>
+          <div className="item-display">
+            <ItemImage url={this.props.item.Image}/>
+            <ItemDescription name={this.props.item.Name}/>
+          </div>
           <ItemShopper itemIncremented={this.itemIncremented} itemDecremented={this.itemDecremented} pricing={pricing} quantity={this.props.quantity} />
         </div>
       );

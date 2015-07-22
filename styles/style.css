@@ -2,11 +2,110 @@
 Styles Here
 */
 
+body {
+	font-family: verdana, arial, sans-serif;
+	color: #555555;
+}
+
 .main {	
-	width: 80%;
+	width: 100%;
 }
 
 .catalogue {
-	width: 60%;
+	width: 70%;
 	float: left;
+}
+
+.item {
+	width: 150px;
+	height: 375px;
+	float: left;
+	border: 1px solid #EEEEEE;
+}
+
+.item a {
+	font-size: .6em;
+}
+
+.item-detail-image img {
+	margin-top: 15px;
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.item-display {
+	height: 60%;
+}
+
+.item-description {
+	padding: 5px 20px 5px 20px;
+	text-align: center;
+	line-height: .7em;
+}
+
+.item-name {
+	font-size: .7em;
+}
+
+.item-shopper {
+	border-top: 1px solid #EEEEEE;
+	padding: 5px;
+	text-align: center;
+}
+
+.item-quantity {
+	width: 3em;
+}
+
+/* pricing */
+.item-pricing {
+	margin: 10px 5px 15px 5px;
+}
+
+.item-price {
+	font-size: .8em;
+	color: #777777;
+	font-weight: bold;
+	float: left;
+	line-height: 1em;
+}
+
+.item-unit-price {
+	font-size: .6em;
+	float: right;
+	line-height: 1.4em;
+}
+
+/* quantity */
+.item-quantity-container {
+	text-align: left;
+	float: left;
+}
+
+.item-quantity-container button {
+	margin: 0;
+	padding: 0;
+	width: 25px;
+	height: 25px;
+	color: blue;
+	font-size: 1.5em;
+	line-height: .3em;
+}
+
+.item-quantity {
+	font-size: .8em;
+	height: 19px;
+	width: 2em;
+	padding-left: .4em;
+
+}
+
+.item-quantity-label {
+	font-size: .6em;
+	line-height: 1.4em;
+}
+
+.item-add-container {
+	height: 100%;
 }
